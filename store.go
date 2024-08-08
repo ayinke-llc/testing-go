@@ -2,10 +2,13 @@ package testinggo
 
 import (
 	"context"
+	"errors"
 	"io"
 
 	"github.com/google/uuid"
 )
+
+var ErrItemNotFound = errors.New("task item not found")
 
 type Store interface {
 	io.Closer

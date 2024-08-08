@@ -3,6 +3,7 @@ package main
 import (
 	"ayinke-llc/gophercrunch/testing-go/cmd/config"
 	"ayinke-llc/gophercrunch/testing-go/server"
+	"ayinke-llc/gophercrunch/testing-go/store/memory"
 	"flag"
 	"os"
 	"os/signal"
@@ -20,6 +21,8 @@ func main() {
 	var httpPort int = 3200
 
 	flag.IntVar(&httpPort, "http.port", 3200, "http port to run web server on")
+
+	flag.Parse()
 
 	logrus.SetOutput(os.Stdout)
 	logrus.SetFormatter(&logrus.JSONFormatter{})
@@ -43,7 +46,9 @@ func main() {
 
 	logger.Debug("starting app")
 
-	srv := server.New(cfg, httpPort)
+	memoryStore := memory.New()
+
+	srv := server.New(cfg, memoryStore, httpPort)
 
 	go func() {
 		logger.Debug("starting HTTP server")
@@ -54,4 +59,5 @@ func main() {
 
 	<-sig
 	logger.Debug("shutting down app")
+	memoryStore.Close()
 }
